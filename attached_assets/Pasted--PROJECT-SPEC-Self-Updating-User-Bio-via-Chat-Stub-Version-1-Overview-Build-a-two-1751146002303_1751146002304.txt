@@ -1,0 +1,223 @@
+# 🚀 PROJECT SPEC  –  Self-Updating User Bio via Chat (Stub Version)
+
+## 1️⃣ Overview
+Build a two-part app (FastAPI backend + React frontend) that lets a user chat with an assistant.  
+When the user sends messages, the system **pretends** to update an “About Me” bio and a JSON memory store **with simple hard-coded rules only** (no OpenAI / MCP yet).  
+Seed the project with example data so it runs instantly.
+
+---
+
+## 2️⃣ Tech Stack
+- **Backend**: Python 3.10 + FastAPI + Uvicorn  
+- **Frontend**: React (Vite or CRA)  
+- **Storage**: `memory_store.json` (flat file)  
+- **NO LLM calls** – just stub logic.
+
+---
+
+## 3️⃣ Directory / File Layout
+/self-updating-bio
+/backend
+main.py
+requirements.txt
+memory_store.json
+/frontend
+/src
+api.js
+ChatBox.jsx
+App.jsx
+
+yaml
+Copy
+Edit
+
+---
+
+## 4️⃣ Backend Details (`/backend`)
+
+### requirements.txt
+fastapi
+uvicorn
+
+pgsql
+Copy
+Edit
+
+### memory_store.json  (seed data)
+```json
+{
+  "bio": "Hi! I'm Jason and I love photography.",
+  "facts": {
+    "name": "Jason",
+    "location": "Austin",
+    "interests": ["photography"]
+  }
+}
+main.py
+python
+Copy
+Edit
+from fastapi import FastAPI
+from pydantic import BaseModel
+import json
+
+MEMORY_FILE = "memory_store.json"
+app = FastAPI(title="Self-Updating Bio (Stub)")
+
+class ChatRequest(BaseModel):
+    message: str
+
+class ChatResponse(BaseModel):
+    reply: str
+    bio: str
+    memory: dict
+
+def load_mem():
+    with open(MEMORY_FILE) as f:
+        return json.load(f)
+
+def save_mem(mem):
+    with open(MEMORY_FILE, "w") as f:
+        json.dump(mem, f, indent=2)
+
+@app.post("/chat", response_model=ChatResponse)
+def chat(req: ChatRequest):
+    mem = load_mem()
+
+    # 👉 STUB RULE (placeholder for future MCP):
+    # If message contains the word "test", add "testing" to interests once.
+    if "test" in req.message.lower() and "testing" not in mem["facts"]["interests"]:
+        mem["facts"]["interests"].append("testing")
+        mem["bio"] = (
+            f"I'm {mem['facts']['name']} from {mem['facts']['location']} who loves "
+            + ", ".join(mem['facts']['interests'])
+            + "."
+        )
+
+    save_mem(mem)
+
+    return ChatResponse(
+        reply=f"Got it! Current bio: {mem['bio']}",
+        bio=mem["bio"],
+        memory=mem["facts"]
+    )
+
+@app.get("/memory")
+def get_memory():
+    return load_mem()
+5️⃣ Frontend Details (/frontend/src)
+api.js
+javascript
+Copy
+Edit
+const API = "http://localhost:8000";          // change if running in a different host/port
+
+export async function sendChat(message) {
+  const res = await fetch(`${API}/chat`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ message }),
+  });
+  return res.json();
+}
+
+export async function fetchMemory() {
+  const res = await fetch(`${API}/memory`);
+  return res.json();
+}
+ChatBox.jsx
+javascript
+Copy
+Edit
+import { useState, useEffect } from "react";
+import { sendChat, fetchMemory } from "./api";
+
+export default function ChatBox() {
+  const [input, setInput] = useState("");
+  const [messages, setMessages] = useState([]);
+  const [bio, setBio] = useState("");
+  const [memory, setMemory] = useState({});
+
+  useEffect(() => {                      // initial fetch
+    fetchMemory().then(m => { setBio(m.bio); setMemory(m.facts); });
+  }, []);
+
+  async function handleSend() {
+    if (!input) return;
+    setMessages([...messages, { role: "user", text: input }]);
+    const res = await sendChat(input);
+    setMessages(prev => [...prev, { role: "ai", text: res.reply }]);
+    setBio(res.bio);
+    setMemory(res.memory);
+    setInput("");
+  }
+
+  return (
+    <div className="max-w-lg mx-auto p-4 font-sans">
+      <h1 className="text-2xl font-bold mb-3">Self-Updating Bio (Stub)</h1>
+
+      <div className="border p-2 mb-2 rounded bg-gray-50">
+        <strong>Current Bio:</strong> {bio}
+      </div>
+
+      <div className="border p-2 h-60 overflow-y-auto rounded bg-white mb-2">
+        {messages.map((m, i) => (
+          <div key={i} className={m.role === "user" ? "text-right" : "text-left"}>
+            {m.role === "user" ? "🧑" : "🤖"} {m.text}
+          </div>
+        ))}
+      </div>
+
+      <input
+        className="border rounded w-full p-2 mb-2"
+        placeholder="Say something..."
+        value={input}
+        onChange={e => setInput(e.target.value)}
+        onKeyDown={e => e.key === "Enter" && handleSend()}
+      />
+      <button className="w-full bg-blue-600 text-white p-2 rounded" onClick={handleSend}>
+        Send
+      </button>
+
+      <div className="mt-4 text-xs border rounded p-2 bg-gray-50">
+        <strong>Memory JSON</strong>
+        <pre>{JSON.stringify(memory, null, 2)}</pre>
+      </div>
+    </div>
+  );
+}
+App.jsx
+javascript
+Copy
+Edit
+import ChatBox from "./ChatBox";
+
+export default function App() {
+  return (
+    <div className="min-h-screen bg-gray-100">
+      <ChatBox />
+    </div>
+  );
+}
+6️⃣ Build & Run Instructions (Replit)
+Create two Repls in the same workspace or separate tabs:
+
+Python → paste /backend files → run:
+
+bash
+Copy
+Edit
+pip install -r requirements.txt
+uvicorn main:app --reload --port 8000
+React → paste /frontend/src files → press Run.
+
+Open the React preview; it should connect to localhost:8000.
+
+Type any message. If you include the word “test”, the backend stub will:
+
+Append "testing" to interests
+
+Update the bio
+
+Return the new bio & memory to the UI.
+
