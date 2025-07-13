@@ -1,8 +1,25 @@
 {
-  "bio": "Hi! I'm Jason and I love photography.",
-  "facts": {
-    "name": "Jason",
-    "location": "Austin",
-    "interests": ["photography"]
-  }
+  "user_id": "abc123",
+  "facts": [
+    {
+      "key": "name",
+      "value": "Jason",
+      "confidence": 0.95,
+      "source": "user_input",
+      "last_updated": "2025-06-28T12:00:00Z"
+    },
+    {
+      "key": "location",
+      "value": "Austin",
+      "confidence": 0.85
+    },
+    {
+      "key": "interests",
+      "value": ["photography", "tennis"]
+    },
+    {
+      "key": "goals",
+      "value": ["get fit", "learn French"]
+    }
+  ]
 }
