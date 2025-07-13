@@ -55,7 +55,7 @@ export class MemStorage implements IStorage {
   }
 
   /** Save memory (user profile) to disk */
-  private async saveMemory(memory: MemoryStore): Promise<void> {
+  async saveMemory(memory: MemoryStore): Promise<void> {
     await fs.writeFile(MEMORY_FILE, JSON.stringify(memory, null, 2));
   }
 
