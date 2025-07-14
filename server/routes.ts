@@ -1,11 +1,11 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
-import { storage } from "./storage";
-import { chatRequestSchema } from "@shared/schema";
+import { storage } from "./storage.js";
+import { chatRequestSchema } from "../shared/schema.js";
 import { OpenAI } from "openai";
 import { nanoid } from "nanoid";
 
-export async function registerRoutes(app: Express): Promise<Server> {
+export async function registerRoutes(app: Express): Promise<void> {
 
   app.post("/api/chat", async (req, res) => {
   try {
@@ -18,7 +18,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     // Save the new USER message to history
     await storage.addMessage({
       id: nanoid(),
-      role: "user",
+      role: "user", 
       content: message,
       timestamp: Date.now(),
     });
@@ -71,9 +71,20 @@ Your response MUST follow this JSON schema exactly:
 
     const assistantMessage = completion.choices[0].message.content;
 
-    // Parse JSON
-    const parsed = JSON.parse(assistantMessage);
-    const updatedMemory = parsed.updated_memory;
+    let updatedMemory;
+    try {
+      if (assistantMessage === null) {
+        throw new Error("OpenAI response was null");
+      }
+      const parsed = JSON.parse(assistantMessage);
+      if (!parsed || typeof parsed !== "object" || !parsed.updated_memory) {
+        throw new Error("OpenAI response missing 'updated_memory'");
+      }
+      updatedMemory = parsed.updated_memory;
+    } catch (err) {
+      console.error("Failed to parse OpenAI response:", assistantMessage);
+      return res.status(400).json({ message: "Invalid response from assistant." });
+    }
 
     // Merge memories
     memory.facts = storage.mergeMemories(memory.facts, updatedMemory);
