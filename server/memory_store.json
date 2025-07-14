@@ -1,11 +1,13 @@
 {
-  "bio": "I'm Jason from Austin who loves photography, testing.",
+  "bio": "I'm Alex from Austin who loves photography, coding, hiking, outdoor activities.",
   "facts": {
-    "name": "Jason",
+    "name": "Alex",
     "location": "Austin",
     "interests": [
       "photography",
-      "testing"
+      "coding",
+      "hiking",
+      "outdoor activities"
     ]
   }
 }

@@ -1,15 +1,32 @@
 [
   {
-    "id": "UK4Om6f6jzk4EPpAzL3aK",
+    "id": "MqjrZxFcCmZsJx9NFIy5U",
     "role": "user",
-    "content": "I love testing software",
-    "timestamp": 1752437951956
+    "content": "i like to model",
+    "timestamp": 1752525579075
   },
   {
-    "id": "GodmXZgVIvLHUPI77_yhN",
+    "id": "jYJdnkn5lO3BiPAsg9Yar",
+    "role": "user",
+    "content": "Hello, my name is Alex and I love coding",
+    "timestamp": 1752525951257
+  },
+  {
+    "id": "ROBJJsvmY0vDlMMNqcN3R",
     "role": "assistant",
-    "content": "Great! I've detected that you mentioned \"test\" in your message. I've updated your bio to include \"testing\" in your interests!",
-    "timestamp": 1752437951959,
-    "bioUpdated": true
+    "content": "{\n  \"updated_memory\": {\n    \"name\": \"Alex\",\n    \"location\": \"Austin\",\n    \"interests\": [\n      \"photography\",\n      \"coding\"\n    ]\n  }\n}",
+    "timestamp": 1752525952450
+  },
+  {
+    "id": "uTzEb9paVDcE2zCpbdYUr",
+    "role": "user",
+    "content": "I also enjoy hiking and outdoor activities",
+    "timestamp": 1752525958514
+  },
+  {
+    "id": "PDyAolVFvUwsBqbO35S7q",
+    "role": "assistant",
+    "content": "{\n  \"updated_memory\": {\n    \"name\": \"Alex\",\n    \"location\": \"Austin\",\n    \"interests\": [\n      \"photography\",\n      \"coding\",\n      \"hiking\",\n      \"outdoor activities\"\n    ]\n  }\n}",
+    "timestamp": 1752525960893
   }
 ]
