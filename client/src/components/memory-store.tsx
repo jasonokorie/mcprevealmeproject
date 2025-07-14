@@ -119,7 +119,7 @@ export function MemoryStore() {
               Interests
             </h4>
             <div className="flex flex-wrap gap-2">
-              {memory?.facts.interests.length ? (
+              {memory?.facts?.interests?.length ? (
                 memory.facts.interests.map((interest, index) => (
                   <span
                     key={interest}

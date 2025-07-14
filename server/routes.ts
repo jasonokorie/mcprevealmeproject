@@ -5,7 +5,52 @@ import { chatRequestSchema } from "../shared/schema.js";
 import { OpenAI } from "openai";
 import { nanoid } from "nanoid";
 
-export async function registerRoutes(app: Express): Promise<void> {
+export async function registerRoutes(app: Express): Promise<Server> {
+  const server = createServer(app);
+
+  // Get memory endpoint
+  app.get("/api/memory", async (req, res) => {
+    try {
+      const memory = await storage.getMemory();
+      res.json(memory);
+    } catch (error: any) {
+      console.error(error);
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  // Reset memory endpoint
+  app.post("/api/memory/reset", async (req, res) => {
+    try {
+      const memory = await storage.resetMemory();
+      res.json(memory);
+    } catch (error: any) {
+      console.error(error);
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  // Get messages endpoint
+  app.get("/api/messages", async (req, res) => {
+    try {
+      const messages = await storage.getMessages();
+      res.json(messages);
+    } catch (error: any) {
+      console.error(error);
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  // Clear messages endpoint
+  app.delete("/api/messages", async (req, res) => {
+    try {
+      await storage.clearMessages();
+      res.json({ success: true });
+    } catch (error: any) {
+      console.error(error);
+      res.status(500).json({ message: error.message });
+    }
+  });
 
   app.post("/api/chat", async (req, res) => {
   try {
@@ -90,7 +135,12 @@ Your response MUST follow this JSON schema exactly:
     memory.facts = storage.mergeMemories(memory.facts, updatedMemory);
 
     // Regenerate bio
-    memory.bio = `I'm ${memory.facts.name} from ${memory.facts.location} who loves ${memory.facts.interests.join(", ")}.`;
+    const name = memory.facts.name || "Unknown";
+    const location = memory.facts.location || "Unknown";
+    const interests = memory.facts.interests && memory.facts.interests.length > 0 
+      ? memory.facts.interests.join(", ") 
+      : "exploring new things";
+    memory.bio = `I'm ${name} from ${location} who loves ${interests}.`;
 
     // Save updated memory
     await storage.saveMemory(memory);
@@ -116,4 +166,5 @@ Your response MUST follow this JSON schema exactly:
   }
 });
 
+  return server;
 }
