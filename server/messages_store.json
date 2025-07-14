@@ -1,0 +1,15 @@
+[
+  {
+    "id": "UK4Om6f6jzk4EPpAzL3aK",
+    "role": "user",
+    "content": "I love testing software",
+    "timestamp": 1752437951956
+  },
+  {
+    "id": "GodmXZgVIvLHUPI77_yhN",
+    "role": "assistant",
+    "content": "Great! I've detected that you mentioned \"test\" in your message. I've updated your bio to include \"testing\" in your interests!",
+    "timestamp": 1752437951959,
+    "bioUpdated": true
+  }
+]
